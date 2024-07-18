@@ -77,7 +77,7 @@ if [ "$(grep 'ngx_utf16_to_utf8' src/os/win32/ngx_files.c | wc -l)" -ge 2 ]; the
 fi
 
 # apply remaining patches
-git am -3 ../nginx-*.patch
+git am -3 ../0*.patch
 
 set -e
 
@@ -167,6 +167,12 @@ configure_args+=(
     --with-stream_ssl_module \
     --with-stream_ssl_preread_module
 )
+
+# add-module ngx_http_proxy_connect_module
+configure_args+=(
+    --add-module=../ngx_http_proxy_connect_module
+)
+
 echo "${configure_args[@]}"
 auto/configure "${configure_args[@]}" \
     --with-cc-opt='-DFD_SETSIZE=1024 -s -O2 -fno-strict-aliasing -pipe' \
