@@ -16,3 +16,4 @@ deploy:
   name: github
   on:
     appveyor_repo_tag: true
+    APPVEYOR_REPO_TAG_NAME: 1.25.5
