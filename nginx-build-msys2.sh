@@ -41,37 +41,13 @@ OPENSSL="$(curl -s 'https://www.openssl.org/source/' | grep -ioP 'openssl-3\.0\.
 OPENSSL="${OPENSSL:-openssl-3.0.13}"
 echo "${OPENSSL}"
 
-# clone and patch nginx
-if [[ -d nginx ]]; then
+#clone and patch nginx
+if [[ "${NGINX_TAG}" == "" ]]; then
+    git clone https://github.com/nginx/nginx.git --depth=1
     cd nginx || exit 1
-    git checkout master
-    git branch patch -D
-    if [[ "${NGINX_TAG}" == "" ]]; then
-        git reset --hard origin || git reset --hard
-        git pull
-    else
-        git reset --hard "${NGINX_TAG}" || git reset --hard
-    fi
 else
-    if [[ "${NGINX_TAG}" == "" ]]; then
-        git clone https://github.com/nginx/nginx.git --depth=1
-        cd nginx || exit 1
-    else
-        git clone https://github.com/nginx/nginx.git --depth=1 --branch "${NGINX_TAG}"
-        cd nginx || exit 1
-    fi
-fi
-
-git checkout -b patch
-
-# Since 1.23.4 utf16 encoded pathes are supported natively upstream
-# detect function ngx_utf16_to_utf8 introduced since nginx 1.23.4
-if [ "$(grep 'ngx_utf16_to_utf8' src/os/win32/ngx_files.c | wc -l)" -ge 2 ]; then
-    rm -f ../nginx-0002-win32-force-utf-8-encoding-in-ngx_dir_t.patch
-    rm -f ../nginx-0003-ngx_files-implement-some-functions-in-utf8-encoding.patch
-    rm -f ../nginx-0004-ngx_files-implement-ngx_open_tempfile-in-utf8-encodi.patch
-    rm -f ../nginx-0005-ngx_files-implement-ngx_open_glob-and-ngx_read_glob-.patch
-    rm -f ../nginx-0006-ngx_files-implement-ngx_win32_rename_file-in-utf8-en.patch
+    git clone https://github.com/nginx/nginx.git --depth=1 --branch "${NGINX_TAG}"
+    cd nginx || exit 1
 fi
 
 # apply remaining patches
