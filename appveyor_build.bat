@@ -1,4 +1,4 @@
-set cmdLine="cd \"$APPVEYOR_BUILD_FOLDER\" && exec ./nginx-build-msys2.sh -t=1.25.5"
+set cmdLine="cd \"$APPVEYOR_BUILD_FOLDER\" && exec ./nginx-build-msys2.sh"
 if "%APPVEYOR_REPO_TAG%" == "true" set cmdLine="cd \"$APPVEYOR_BUILD_FOLDER\" && exec ./nginx-build-msys2.sh --tag=release-$APPVEYOR_REPO_TAG_NAME"
 
 set MSYSTEM=MINGW64
