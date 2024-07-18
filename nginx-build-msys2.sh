@@ -59,8 +59,6 @@ else
     else
         git clone https://github.com/nginx/nginx.git --depth=1 --branch "${NGINX_TAG}"
         cd nginx || exit 1
-        # You are in 'detached HEAD' state.
-        git checkout -b master
     fi
 fi
 
