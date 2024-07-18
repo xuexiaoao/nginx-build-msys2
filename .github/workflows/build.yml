@@ -1,0 +1,48 @@
+name: Build NGINX for Windows
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        update: true
+        install: >-
+          base-devel
+          mingw-w64-x86_64-toolchain
+          mingw-w64-x86_64-pcre
+          mingw-w64-x86_64-zlib
+
+    - name: Install dependencies
+      run: |
+        pacman -S --noconfirm \
+          mingw-w64-x86_64-openssl \
+          mingw-w64-x86_64-pcre \
+          mingw-w64-x86_64-zlib
+
+    - name: Build NGINX
+      run: |
+        git clone https://github.com/nginx/nginx.git
+        cd nginx
+        ./auto/configure --with-cc=clang --with-cc-opt='-static' --with-ld-opt='-static' --prefix=/mingw64
+        make
+        make install
+
+    - name: Archive build artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: nginx-windows
+        path: /mingw64
